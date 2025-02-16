@@ -1,50 +1,65 @@
-async function updateTime() {
-  const citySelect = document.getElementById("citySelect");
-  const selectedValue = citySelect.value;
-  const cityName = document.getElementById("cityName");
-  const date = document.getElementById("date");
-  const time = document.getElementById("time");
+function updateTime() {
+  const cities = [
+    { id: "time1", zone: "America/Los_Angeles", dateId: "date1" },
+    { id: "time2", zone: "Europe/London", dateId: "date2" },
+    { id: "time3", zone: "Asia/Tokyo", dateId: "date3" },
+  ];
 
-  if (selectedValue === "current") {
-    // Get user's current location
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async (position) => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
+  cities.forEach((city) => {
+    const now = new Date().toLocaleString("en-US", {
+      timeZone: city.zone,
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+      hour12: true,
+    });
 
-        // Use TimezoneDB API to get the timezone
-        const apiKey = "YOUR_API_KEY"; // Replace with your TimezoneDB API key
-        const apiUrl = `https://api.timezonedb.com/v2.1/get-time-zone?key=${apiKey}&format=json&by=position&lat=${lat}&lng=${lon}`;
-
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-
-        cityName.textContent = "Your Location";
-        date.textContent = new Date(data.formatted).toLocaleDateString();
-        time.textContent = new Date(data.formatted).toLocaleTimeString();
-      });
-    } else {
-      alert("Geolocation is not supported by this browser.");
-    }
-  } else if (selectedValue) {
-    // Display time for selected city
-    const cityTime = new Date().toLocaleString("en-US", {
-      timeZone: selectedValue,
+    const date = new Date().toLocaleDateString("en-US", {
+      timeZone: city.zone,
       weekday: "long",
       year: "numeric",
       month: "long",
       day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      second: "numeric",
     });
 
-    cityName.textContent = citySelect.options[citySelect.selectedIndex].text;
-    date.textContent = cityTime.split(",")[0];
-    time.textContent = cityTime.split(",")[1];
+    document.getElementById(city.id).innerText = now;
+    document.getElementById(city.dateId).innerText = date;
+  });
+}
+
+function displayCurrentLocationTime(position) {
+  const { latitude, longitude } = position.coords;
+  fetch(
+    `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+  )
+    .then((response) => response.json())
+    .then((data) => {
+      const cityName = data.city || "Current Location";
+      const now = new Date();
+      document
+        .getElementById("city1")
+        .querySelector("h2").innerText = `${cityName} 🌍`;
+      document.getElementById("time1").innerText = now.toLocaleTimeString();
+      document.getElementById("date1").innerText = now.toLocaleDateString();
+    });
+}
+
+function showCurrentLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(displayCurrentLocationTime);
   } else {
-    cityName.textContent = "--";
-    date.textContent = "--";
-    time.textContent = "--";
+    alert("Geolocation is not supported by this browser.");
   }
 }
+
+document.getElementById("citySelect").addEventListener("change", function () {
+  const selectedCity = this.value;
+  if (selectedCity === "current") {
+    showCurrentLocation();
+  } else {
+    updateTime();
+  }
+});
+
+setInterval(updateTime, 1000);
+updateTime();

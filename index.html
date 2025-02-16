@@ -2,7 +2,6 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
     <title>World Clock - Tamana Gul Najafi</title>
@@ -10,29 +9,41 @@
   <body>
     <div class="container">
       <h1>World Clock</h1>
-
       <select id="citySelect" onchange="updateTime()">
         <option value="">Select a city...</option>
         <option value="current">Current Location</option>
-        <option value="Europe/London">London 🇬🇧</option>
-        <option value="America/New_York">New York 🇺🇸</option>
-        <option value="Pacific/Auckland">Auckland 🇳🇿</option>
+        <option value="America/Los_Angeles">Los Angeles</option>
+        <option value="Europe/London">London</option>
+        <option value="Asia/Tokyo">Tokyo</option>
       </select>
 
-      <div class="city">
-        <h2 id="cityName">--</h2>
-        <div class="date" id="date">--</div>
-        <div class="time" id="time">--</div>
+      <div class="city" id="city1">
+        <h2>Los Angeles 🇺🇸</h2>
+        <div class="date" id="date1"></div>
+        <div class="time" id="time1"></div>
+      </div>
+
+      <div class="city" id="city2">
+        <h2>London 🇬🇧</h2>
+        <div class="date" id="date2"></div>
+        <div class="time" id="time2"></div>
+      </div>
+
+      <div class="city" id="city3">
+        <h2>Tokyo 🇯🇵</h2>
+        <div class="date" id="date3"></div>
+        <div class="time" id="time3"></div>
       </div>
     </div>
 
     <footer>
       This project was coded with ❤️ by Tamana Gul Najafi and is
       <a href="https://github.com/tamana-najafi/WorldClock" target="_blank">
-        open sourced on GitHub</a
-      >
+        open sourced on GitHub
+      </a>
+      <br />
+      <a href="index.html">Go to Homepage</a>
     </footer>
-
     <script src="index.js"></script>
   </body>
 </html>
