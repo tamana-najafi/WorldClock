@@ -29,24 +29,47 @@ function updateTime() {
 
 function displayCurrentLocationTime(position) {
   const { latitude, longitude } = position.coords;
+  const apiKey = "YOUR_API_KEY"; // Get a free key from https://timezonedb.com/
+
   fetch(
-    `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+    `https://api.timezonedb.com/v2.1/get-time-zone?key=${apiKey}&format=json&by=position&lat=${latitude}&lng=${longitude}`
   )
     .then((response) => response.json())
     .then((data) => {
-      const cityName = data.city || "Current Location";
-      const now = new Date();
-      document
-        .getElementById("city1")
-        .querySelector("h2").innerText = `${cityName} 🌍`;
-      document.getElementById("time1").innerText = now.toLocaleTimeString();
-      document.getElementById("date1").innerText = now.toLocaleDateString();
+      if (data.status === "OK") {
+        const now = new Date().toLocaleString("en-US", {
+          timeZone: data.zoneName,
+          hour: "numeric",
+          minute: "numeric",
+          second: "numeric",
+          hour12: true,
+        });
+
+        const date = new Date().toLocaleDateString("en-US", {
+          timeZone: data.zoneName,
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+
+        document.querySelector("#city1 h2").innerText = `${data.zoneName} 🌍`;
+        document.getElementById("time1").innerText = now;
+        document.getElementById("date1").innerText = date;
+      } else {
+        alert("Unable to retrieve time zone information.");
+      }
+    })
+    .catch(() => {
+      alert("Failed to fetch time zone data.");
     });
 }
 
 function showCurrentLocation() {
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(displayCurrentLocationTime);
+    navigator.geolocation.getCurrentPosition(displayCurrentLocationTime, () => {
+      alert("Unable to retrieve your location.");
+    });
   } else {
     alert("Geolocation is not supported by this browser.");
   }
