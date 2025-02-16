@@ -11,22 +11,18 @@
     <div class="container">
       <h1>World Clock</h1>
 
-      <select id="city-select">
-        <option value="">Select a city..</option>
-        <option value="London">London 🇬🇧</option>
-        <option value="New York">New York 🇺🇸</option>
-        <option value="Auckland">Auckland 🇳🇿</option>
+      <select id="citySelect" onchange="updateTime()">
+        <option value="">Select a city...</option>
+        <option value="current">Current Location</option>
+        <option value="Europe/London">London 🇬🇧</option>
+        <option value="America/New_York">New York 🇺🇸</option>
+        <option value="Pacific/Auckland">Auckland 🇳🇿</option>
       </select>
 
       <div class="city">
-        <h2>Los Angeles 🇺🇸</h2>
-        <div class="date">February 17 2025</div>
-        <div class="time">1:48:15 AM</div>
-      </div>
-      <div class="city">
-        <h2>Sydney 🇦🇺</h2>
-        <div class="date">February 17 2025</div>
-        <div class="time">1:48:15 AM</div>
+        <h2 id="cityName">--</h2>
+        <div class="date" id="date">--</div>
+        <div class="time" id="time">--</div>
       </div>
     </div>
 

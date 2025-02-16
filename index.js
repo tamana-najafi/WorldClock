@@ -1,32 +1,50 @@
-// index.js
-document.addEventListener("DOMContentLoaded", function () {
-  const select = document.getElementById("city-select");
+async function updateTime() {
+  const citySelect = document.getElementById("citySelect");
+  const selectedValue = citySelect.value;
+  const cityName = document.getElementById("cityName");
+  const date = document.getElementById("date");
+  const time = document.getElementById("time");
 
-  select.addEventListener("change", function () {
-    const city = select.value;
-    let timezone = "";
+  if (selectedValue === "current") {
+    // Get user's current location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
 
-    if (city === "London") {
-      timezone = "Europe/London";
-    } else if (city === "New York") {
-      timezone = "America/New_York";
-    } else if (city === "Auckland") {
-      timezone = "Pacific/Auckland";
-    }
+        // Use TimezoneDB API to get the timezone
+        const apiKey = "YOUR_API_KEY"; // Replace with your TimezoneDB API key
+        const apiUrl = `https://api.timezonedb.com/v2.1/get-time-zone?key=${apiKey}&format=json&by=position&lat=${lat}&lng=${lon}`;
 
-    if (timezone) {
-      const now = new Date().toLocaleString("en-US", {
-        timeZone: timezone,
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        second: "numeric",
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        cityName.textContent = "Your Location";
+        date.textContent = new Date(data.formatted).toLocaleDateString();
+        time.textContent = new Date(data.formatted).toLocaleTimeString();
       });
-
-      alert(`It is ${now} in ${timezone.replace("_", " ")}`);
+    } else {
+      alert("Geolocation is not supported by this browser.");
     }
-  });
-});
+  } else if (selectedValue) {
+    // Display time for selected city
+    const cityTime = new Date().toLocaleString("en-US", {
+      timeZone: selectedValue,
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+    });
+
+    cityName.textContent = citySelect.options[citySelect.selectedIndex].text;
+    date.textContent = cityTime.split(",")[0];
+    time.textContent = cityTime.split(",")[1];
+  } else {
+    cityName.textContent = "--";
+    date.textContent = "--";
+    time.textContent = "--";
+  }
+}
